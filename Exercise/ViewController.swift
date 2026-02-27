@@ -5,40 +5,59 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-	var onAbout: (() -> Void) = {}
+final class ViewController: UIViewController {
+    var onAbout: (() -> Void)?
+    var onTodo: (() -> Void)?
 
-	override func viewDidLoad() {
-		super.viewDidLoad()
+    private let todoButton = UIButton(type: .system)
+    private let aboutButton = UIButton(type: .system)
 
-		view.backgroundColor = .white
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
+    }
 
-		let todoButton = UIButton(type: .system)
-		todoButton.translatesAutoresizingMaskIntoConstraints = false
-		todoButton.setTitle("TO-DO: #", for: .normal)
-		todoButton.setTitleColor(.systemBlue, for: .normal)
+    func updateTodoCount(_ count: Int) {
+        todoButton.setTitle("TO-DO: \(count)", for: .normal)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupView() {
+        view.backgroundColor = .white
 
-		let aboutButton = UIButton(type: .system)
-		aboutButton.translatesAutoresizingMaskIntoConstraints = false
-		aboutButton.setTitle("About", for: .normal)
-		aboutButton.setTitleColor(.systemBlue, for: .normal)
-		aboutButton.addTarget(self, action: #selector(aboutButtonTap), for: .touchUpInside)
+        todoButton.translatesAutoresizingMaskIntoConstraints = false
+        todoButton.setTitle("TO-DO: 0", for: .normal)
+        todoButton.accessibilityLabel = "TO-DO List"
+        todoButton.setTitleColor(.systemBlue, for: .normal)
+        todoButton.addTarget(self, action: #selector(todoButtonTap), for: .touchUpInside)
 
-		let stackView = UIStackView(arrangedSubviews: [todoButton, aboutButton])
-		stackView.translatesAutoresizingMaskIntoConstraints = false
-		stackView.axis = .vertical
-		stackView.alignment = .center
-		stackView.spacing = 16
+        aboutButton.translatesAutoresizingMaskIntoConstraints = false
+        aboutButton.setTitle("About", for: .normal)
+        aboutButton.accessibilityLabel = "About Public"
+        aboutButton.setTitleColor(.systemBlue, for: .normal)
+        aboutButton.addTarget(self, action: #selector(aboutButtonTap), for: .touchUpInside)
 
-		view.addSubview(stackView)
+        let stackView = UIStackView(arrangedSubviews: [todoButton, aboutButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 16
 
-		NSLayoutConstraint.activate([
-			stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			stackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-		])
-	}
+        view.addSubview(stackView)
 
-	@objc private func aboutButtonTap() {
-		onAbout()
-	}
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+        ])
+    }
+    
+    @objc private func todoButtonTap() {
+        onTodo?()
+    }
+
+    @objc private func aboutButtonTap() {
+        onAbout?()
+    }
 }
+
