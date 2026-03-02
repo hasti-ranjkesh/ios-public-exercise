@@ -13,7 +13,7 @@ struct TodoListScreen: View {
     var body: some View {
         List {
             ForEach(viewModel.items, id: \.id) { item in
-                HStack(spacing: 12) {
+                HStack(spacing: 16) {
                     Text(item.title)
                         .foregroundStyle(textColor(for: item.status))
                     
@@ -27,7 +27,7 @@ struct TodoListScreen: View {
                             viewModel.deleteTask(id: item.id)
                         } label: {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.gray)
+                                .foregroundStyle(.primary)
                         }
                     case .failed:
                         EmptyView()

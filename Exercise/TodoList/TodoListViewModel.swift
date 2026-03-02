@@ -10,7 +10,6 @@ import Combine
 
 @MainActor
 final class TodoListViewModel: ObservableObject {
-    nonisolated static let maxTaskNameLength = 50
     
     @Published private(set) var items: [TodoItem]
     
@@ -22,17 +21,9 @@ final class TodoListViewModel: ObservableObject {
         let trimmedTaskName = taskName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTaskName.isEmpty else { return }
         
-        let validTaskName = String(trimmedTaskName.prefix(Self.maxTaskNameLength))
-        let newItem = TodoItem(title: validTaskName, status: .saving)
-        
+        let newItem = TodoItem(title: trimmedTaskName, status: .saving)
         items.insert(newItem, at: 0)
-        
-        simulateSave(for: newItem.id)
-    }
-    
-    func deleteTask(at index: Int) {
-        guard items.indices.contains(index), items[index].status == .saved else { return }
-        items.remove(at: index)
+        saveTask(for: newItem.id)
     }
 
     func deleteTask(id: UUID) {
@@ -40,7 +31,9 @@ final class TodoListViewModel: ObservableObject {
         deleteTask(at: index)
     }
     
-    private func simulateSave(for id: UUID) {
+    // MARK: - Private Methods
+    
+    private func saveTask(for id: UUID) {
         Task { [weak self] in
             let delayMilliseconds = Int.random(in: 500...5000)
             let delayNanoseconds = UInt64(delayMilliseconds) * 1_000_000
@@ -65,8 +58,13 @@ final class TodoListViewModel: ObservableObject {
             guard let self else { return }
             guard let failedRow = items.firstIndex(where: { $0.id == id }) else { return }
             guard items[failedRow].status == .failed else { return }
-            
             items.remove(at: failedRow)
         }
+    }
+
+    
+    private func deleteTask(at index: Int) {
+        guard items.indices.contains(index), items[index].status == .saved else { return }
+        items.remove(at: index)
     }
 }

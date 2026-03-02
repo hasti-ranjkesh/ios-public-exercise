@@ -42,7 +42,7 @@ final class ViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 16
+        stackView.spacing = Constants.margin
 
         view.addSubview(stackView)
 
@@ -61,3 +61,8 @@ final class ViewController: UIViewController {
     }
 }
 
+extension ViewController {
+    enum Constants {
+        static let margin: CGFloat = 16
+    }
+}

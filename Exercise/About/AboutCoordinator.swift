@@ -1,15 +1,18 @@
 //
-//  MainCoordinator.swift
+//  AboutCoordinator.swift
 //  Exercise
 //
 
 import UIKit
 
-class MainCoordinator {
+final class AboutCoordinator: Coordinator {
 	let navigationController: UINavigationController
 	let onFinish: (() -> Void)?
 
-	init(navigationController: UINavigationController, onFinish: (() -> Void)? = nil) {
+	init(
+        navigationController: UINavigationController,
+        onFinish: (() -> Void)? = nil
+    ) {
 		self.navigationController = navigationController
 		self.onFinish = onFinish
 	}
