@@ -8,9 +8,14 @@
 import UIKit
 import SwiftUI
 
+/// A hosting controller that wraps `TodoListScreen` and exposes a deinitialization callback.
+/// The coordinator needs to be notified when the pushed SwiftUI screen is released from memory.
 private final class TodoListHostingController: UIHostingController<TodoListScreen> {
+
+    /// Set this to perform cleanup or notify external owners that the screen lifecycle ended.
     var onDeinit: (() -> Void)?
     
+    /// Calls `onDeinit` just before the hosting controller is deallocated.
     deinit {
         onDeinit?()
     }
@@ -60,10 +65,8 @@ final class TodoCoordinator: Coordinator {
                 let self,
                 let taskName = alertController?.textFields?.first?.text
             else { return }
-            
-            Task { @MainActor [weak self] in
-                self?.todoListViewModel.addTask(named: taskName)
-            }
+
+            addTaskOnMainActor(named: taskName)
         }
         
         alertController.addAction(cancelAction)
@@ -71,6 +74,18 @@ final class TodoCoordinator: Coordinator {
         navigationController.present(alertController, animated: true)
     }
     
+    /// Adds a new task from the alert flow on the main actor.
+    ///
+    /// UIKit alert actions may execute outside the main-actor isolation of SwiftUI state.
+    /// This helper guarantees `TodoListViewModel` mutation happens on the main actor.
+    ///
+    /// - Parameter taskName: The validated task name entered by the user.
+    private func addTaskOnMainActor(named taskName: String) {
+        Task { @MainActor [weak self] in
+            self?.todoListViewModel.addTask(named: taskName)
+        }
+    }
+
     @objc private func taskNameTextDidChange(_ textField: UITextField) {
         guard let text = textField.text, text.count > Constants.maxTaskNameLength else { return }
         textField.text = String(text.prefix(Constants.maxTaskNameLength))

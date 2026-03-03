@@ -6,17 +6,24 @@
 import UIKit
 
 final class ViewController: UIViewController {
+    
+    // MARK: - Properties
+    
     var onAbout: (() -> Void)?
     var onTodo: (() -> Void)?
 
     private let todoButton = UIButton(type: .system)
     private let aboutButton = UIButton(type: .system)
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
 
+    // MARK: - Public Method
+    
     func updateTodoCount(_ count: Int) {
         todoButton.setTitle("TO-DO: \(count)", for: .normal)
     }
@@ -60,6 +67,8 @@ final class ViewController: UIViewController {
         onAbout?()
     }
 }
+
+// MARK: - UI Constants
 
 extension ViewController {
     enum Constants {

@@ -7,12 +7,16 @@ import UIKit
 
 @MainActor
 final class AppCoordinator: Coordinator {
-    private let window: UIWindow
     
+    // MARK: - Properties
+    
+    private let window: UIWindow
     private var childCoordinator: Coordinator?
     private var rootNavigationController: UINavigationController?
     private let todoListViewModel = TodoListViewModel()
     private var todoCountTask: Task<Void, Never>?
+    
+    // MARK: - Initialization
     
     init(window: UIWindow) {
         self.window = window
