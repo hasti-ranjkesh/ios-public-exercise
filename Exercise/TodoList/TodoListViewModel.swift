@@ -54,7 +54,8 @@ final class TodoListViewModel: ObservableObject {
         
         items[row].status = .failed
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
             guard let self else { return }
             guard let failedRow = items.firstIndex(where: { $0.id == id }) else { return }
             guard items[failedRow].status == .failed else { return }
